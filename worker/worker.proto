@@ -1,0 +1,33 @@
+syntax = "proto2";
+
+message WorkerInfo {
+    required uint32 port = 1;        //(没有16位类型，但PB采用变长编码)
+}
+
+message ClientTask {
+    enum OP {
+        ADD = 0;
+        SUB = 1;
+        MUL = 2;
+        DIV = 3;
+    }
+    required OP op = 1;
+    oneof num1 {
+        int64 int_num1 = 2;
+        double double_num1 = 3;
+    }
+    oneof num2 {
+        int64 int_num2 = 4;
+        double double_num2 = 5;
+    }
+}
+
+message TaskResult {
+    required bool is_error = 1;
+    oneof result {
+        int64 int_result = 2;
+        double double_result = 3;
+        string err_msg = 4;
+    }
+}
+
