@@ -38,7 +38,7 @@ struct resultInfo
     double value;
 };
 
-char *Master_IP;
+struct in_addr Master_IP;
 int Master_PORT;
 
 workerInfo socket2master(const ClientReq& clientrequest) {
@@ -68,7 +68,7 @@ workerInfo socket2master(const ClientReq& clientrequest) {
     struct sockaddr_in master_addr;
     bzero(&master_addr, sizeof(master_addr));
     master_addr.sin_family = AF_INET;
-    master_addr.sin_addr.s_addr = inet_addr(Master_IP);
+    master_addr.sin_addr = Master_IP;
     master_addr.sin_port = htons(Master_PORT);
     
     if (connect(client_socket,(struct sockaddr*)&master_addr, sizeof(master_addr))!=0){
@@ -338,13 +338,20 @@ void task(int num, int index) {
 
 int main(int argc, char** argv) {
     if (argc != 4) {
-        cout << "Usage: Master_IP Master_PORT NUM" << endl;
+        cout << "Usage: Master_NAME Master_PORT NUM" << endl;
         return 0;
     }
     
     int num = atoi(argv[3]);
     Master_PORT = atoi(argv[2]);
-    Master_IP = argv[1];
+    struct hostent *h;
+    // master addr
+    h = gethostbyname(argv[1]);
+    if (h == NULL) {
+        cout << "[ERROR] MASTER_NAME is wrong!" << endl;
+        exit(-1);
+    }
+    Master_IP = *(struct in_addr*)h->h_addr;
     GOOGLE_PROTOBUF_VERIFY_VERSION;
     
     for(int i = 0; i< Thread_NUM; i++){
