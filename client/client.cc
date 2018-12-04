@@ -348,7 +348,7 @@ int main(int argc, char** argv) {
     GOOGLE_PROTOBUF_VERIFY_VERSION;
     
     for(int i = 0; i< Thread_NUM; i++){
-        thread t(task, floor(num/Thread_NUM), i);
+        thread t(task, num/Thread_NUM, i);
         t.detach();
     }
     cout << "Enter ! to exit" << endl;
