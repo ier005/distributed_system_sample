@@ -16,6 +16,7 @@
 #include <thread>
 #include <time.h>
 #include <stdlib.h>
+#include <netdb.h>
 
 #include "client.pb.h"
 

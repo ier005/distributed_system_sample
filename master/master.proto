@@ -1,0 +1,18 @@
+syntax = "proto2";
+
+package ProtoMsg;
+
+message WorkerInfo {
+	required uint32 port = 1;
+}
+
+message ClientReq {
+	required uint32 req_index = 1;  
+	optional uint32 last_assign_worker_ip = 2;
+	optional uint32 last_assign_worker_port = 3;
+}
+
+message WorkerAssign {
+	required uint32 worker_ip = 1;
+	required uint32 worker_port = 2;
+}
