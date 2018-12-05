@@ -2,16 +2,18 @@
 #include <stdlib.h>
 #include <sys/socket.h>
 #include <arpa/inet.h>
-#include <pthread.h>
 #include <unistd.h>
 #include <netdb.h>
 
 #include "worker.pb.h"
+#include "thread_pool.h"
 
 #define LISTEN_ADDR "0.0.0.0"
 #define LISTEN_NUM 5
 #define HB_INTERVAL 30
 #define RECV_BUF_SIZE 1024
+#define POOL_SIZE 5
+#define QUEUE_SIZE 10
 
 using namespace std;
 
@@ -75,9 +77,17 @@ int main(int argc, char **argv) {
         perror("[ERROR] Listen socket failed");
         exit(-1);
     }
-    cout << "[INFO] listening on " << LISTEN_ADDR << ":" << listen_port << endl;
 
-    pthread_create(&hb_thread, NULL, heart_beat, &master_addr);
+    if (pthread_create(&hb_thread, NULL, heart_beat, &master_addr) < 0) {
+        perror("[ERROR] Create heartbeat thread failed");
+        exit(-1);
+    }
+    if (thread_pool_init(work_func, POOL_SIZE, QUEUE_SIZE) < 0) {
+        perror("[ERROR] Create working thread pool failed");
+        exit(-1);
+    }
+
+    cout << "[INFO] listening on " << LISTEN_ADDR << ":" << listen_port << endl;
 
     while (1) {
         struct sockaddr_in client_addr;
@@ -91,11 +101,8 @@ int main(int argc, char **argv) {
             exit(-1);
         }
         
-        //cout << "[INFO] Accept connectiong from " << inet_ntoa(client_addr.sin_addr) << endl;
-        if (pthread_create(&listen_thread, NULL, work_func, client_fd) != 0) {
-            perror("[ERROR] Create thread failed");
-            exit(-1);
-        }
+        cout << "[INFO] Accept connectiong from " << inet_ntoa(client_addr.sin_addr) << endl;
+        thread_pool_put(client_fd);
     }
 }
 
@@ -112,7 +119,6 @@ void *work_func(void *arg)
     double ret_double;
     int64_t ret_int64;
 
-    pthread_detach(pthread_self());
     recvlen = recv(client_fd, recvbuf, RECV_BUF_SIZE, 0);
     if (recvlen < 0) {
         perror("[Error] Recv failed");
