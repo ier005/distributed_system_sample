@@ -346,6 +346,7 @@ int main(int argc, char** argv) {
     int num = atoi(argv[3]);
     Master_PORT = atoi(argv[2]);
     struct hostent *h;
+    thread ts[Thread_NUM];
     // master addr
     h = gethostbyname(argv[1]);
     if (h == NULL) {
@@ -356,13 +357,10 @@ int main(int argc, char** argv) {
     GOOGLE_PROTOBUF_VERIFY_VERSION;
     
     for(int i = 0; i< Thread_NUM; i++){
-        thread t(task, num/Thread_NUM, i);
-        t.detach();
+        ts[i] = thread(task, num/Thread_NUM, i);
     }
-    cout << "Enter ! to exit" << endl;
-    while (char c = getchar()) {
-        if (c == '!')
-            break;
+    for (int i = 0; i < Thread_NUM; i++) {
+        ts[i].join();
     }
     return 0;
 }

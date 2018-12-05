@@ -5,4 +5,4 @@ worker.pb.cc: worker.proto
 	protoc --cpp_out=. worker.proto
 
 clean:
-	rm worker.pb.h worker.pb.cc worker
+	rm -f worker.pb.h worker.pb.cc worker

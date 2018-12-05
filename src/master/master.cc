@@ -219,7 +219,7 @@ void client_listener(TaskQueue *tq){
 		tq->putTask(ci);
 
 		client_tasks++;
-		cout<<"client listener get tasks: "<< client_tasks <<endl;
+		//cout<<"client listener get tasks: "<< client_tasks <<endl;
 	}
 }
 

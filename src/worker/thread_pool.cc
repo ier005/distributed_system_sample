@@ -1,4 +1,5 @@
 #include "thread_pool.h"
+#include <stdio.h>
 
 
 static pthread_mutex_t mutex;
@@ -25,7 +26,7 @@ static int queue_init(int queue_size)
         return -1;
     }
 
-    queue.queue = (void **)malloc(queue_size * sizeof(void **));
+    queue.queue = (void **)malloc(queue_size * sizeof(void *));
     if (queue.queue == NULL) {
         pthread_mutex_destroy(&mutex);
         sem_destroy(&sem_queue_use);

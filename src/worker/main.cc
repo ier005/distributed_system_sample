@@ -101,7 +101,7 @@ int main(int argc, char **argv) {
             exit(-1);
         }
         
-        cout << "[INFO] Accept connectiong from " << inet_ntoa(client_addr.sin_addr) << endl;
+        //cout << "[INFO] Accept connectiong from " << inet_ntoa(client_addr.sin_addr) << endl;
         thread_pool_put(client_fd);
     }
 }
@@ -213,11 +213,10 @@ void *work_func(void *arg)
         tr.SerializeToArray(buf + 4, size);
         send(client_fd, buf, size + 4, 0);
     }
-        
+
     free(buf);
     free(arg);
     close(client_fd);
-    pthread_exit(NULL);
 }
 
 void *heart_beat(void *arg)

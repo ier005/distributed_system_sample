@@ -1,0 +1,74 @@
+version: "3"
+
+services:
+    master:
+        image: protobuf:dos
+        build: ./docker-image
+        command: sh -c 'make && ./master -v'
+        entrypoint: ''
+        volumes:
+            - ./src/:/src/
+        working_dir: /src/master
+
+    worker1:
+        image: protobuf:dos
+        build: ./docker-image
+        command: sh -c "make && ./worker master 2345 1500"
+        entrypoint: ''
+        volumes:
+            - ./src/:/src/
+        working_dir: /src/worker
+        depends_on:
+            - master
+
+    worker2:
+        image: protobuf:dos
+        build: ./docker-image
+        command: sh -c "make && ./worker master 2345 1501"
+        entrypoint: ''
+        volumes:
+            - ./src/:/src/
+        working_dir: /src/worker
+        depends_on:
+            - master
+
+    worker3:
+        image: protobuf:dos
+        build: ./docker-image
+        command: sh -c "make && ./worker master 2345 1502"
+        entrypoint: ''
+        volumes:
+            - ./src/:/src/
+        working_dir: /src/worker
+        depends_on:
+            - master
+
+    client1:
+        image: protobuf:dos
+        build: ./docker-image
+        command: sh -c "make && ./client master 3456 300000"
+        volumes:
+            - ./src/:/src/
+        working_dir: /src/client
+        depends_on:
+            - master
+
+    client2:
+        image: protobuf:dos
+        build: ./docker-image
+        command: sh -c "make && ./client master 3456 300000"
+        volumes:
+            - ./src/:/src/
+        working_dir: /src/client
+        depends_on:
+            - master
+
+    client3:
+        image: protobuf:dos
+        build: ./docker-image
+        command: sh -c "make && ./client master 3456 300000"
+        volumes:
+            - ./src/:/src/
+        working_dir: /src/client
+        depends_on:
+            - master
