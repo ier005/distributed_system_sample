@@ -96,9 +96,10 @@ int main(int argc, char **argv) {
         pthread_t listen_thread;
        
         *client_fd = accept(listen_fd, (struct sockaddr *)&client_addr, &client_len);
-        if (client_fd < 0) {
-            perror("[ERROR] Accept failed");
-            exit(-1);
+        if (*client_fd < 0) {
+            perror("[WARNING] Accept failed");
+            free(client_fd);
+            continue;
         }
         
         //cout << "[INFO] Accept connectiong from " << inet_ntoa(client_addr.sin_addr) << endl;
@@ -121,7 +122,7 @@ void *work_func(void *arg)
 
     recvlen = recv(client_fd, recvbuf, RECV_BUF_SIZE, 0);
     if (recvlen < 0) {
-        perror("[Warning] Recv failed");
+        perror("[WARNING] Recv failed");
         free(arg);
         close(client_fd);
         return NULL;
