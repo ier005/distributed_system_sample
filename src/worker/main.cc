@@ -127,7 +127,7 @@ void *work_func(void *arg)
     if (recvlen == 0) {
         free(arg);
         close(client_fd);
-        pthread_exit(NULL);
+        return NULL;
     }
 
     memcpy(&size, recvbuf, 4);
