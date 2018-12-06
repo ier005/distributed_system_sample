@@ -95,6 +95,7 @@ int main(int argc, char **argv) {
         int *client_fd = (int *)malloc(sizeof(int));
         pthread_t listen_thread;
        
+        client_len = sizeof(struct sockaddr_in);
         *client_fd = accept(listen_fd, (struct sockaddr *)&client_addr, &client_len);
         if (*client_fd < 0) {
             perror("[WARNING] Accept failed");
