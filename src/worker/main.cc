@@ -121,8 +121,10 @@ void *work_func(void *arg)
 
     recvlen = recv(client_fd, recvbuf, RECV_BUF_SIZE, 0);
     if (recvlen < 0) {
-        perror("[Error] Recv failed");
-        exit(-1);
+        perror("[Warning] Recv failed");
+        free(arg);
+        close(client_fd);
+        return NULL;
     }
     if (recvlen == 0) {
         free(arg);
